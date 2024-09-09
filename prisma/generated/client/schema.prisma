@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  user_id               Int           @id @default(autoincrement())
+  user_nama             String
+  user_nip              String?       @unique
+  user_email            String?
+  user_hp               String
+  user_image            String?
+  user_alamat           String
+  user_jabatan          Int?
+  user_name             String        @unique
+  user_pass             String
+  user_level            Int
+  user_lastip           String?
+  user_lastlogin        String?
+  user_created          DateTime      @default(now())
+  user_updated          DateTime      @updatedAt
+  user_deleted          DateTime?
+  jabatan               jabatan?      @relation(fields: [user_jabatan], references: [jabatan_id])
+  sktm                  sktm[]
+  sktm_createdBy        sktm[]        @relation("CreatedBy")
+  belumNikah            belumNikah[]
+  nikah_createdBy       belumNikah[]  @relation("CreatedBy")
+  skck                  skck[]
+  skck_createdBy        skck[]        @relation("CreatedBy")
+  kehilangan            kehilangan[]
+  kehilangan_createdBy  kehilangan[]  @relation("CreatedBy")
+  penghasilan           penghasilan[]
+  penghasilan_createdBy penghasilan[] @relation("CreatedBy")
+  tani                  tani[]
+  tani_createdBy        tani[]        @relation("CreatedBy")
+}
+
+model jabatan {
+  jabatan_id      Int       @id @default(autoincrement())
+  jabatan_nama    String
+  jabatan_created DateTime  @default(now())
+  jabatan_updated DateTime  @updatedAt
+  jabatan_deleted DateTime?
+  users           users[]
+}
+
+model sktm {
+  sktm_id           Int       @id @default(autoincrement())
+  sktm_noSurat      String?
+  sktm_nama         String
+  sktm_tgl_lahir    DateTime  @db.Date
+  sktm_tempat_lahir String
+  sktm_suku         String
+  sktm_agama        Int
+  sktm_jk           Int
+  sktm_noKtp        String
+  sktm_pekerjaan    String
+  sktm_alamat       String
+  sktm_dusun        String
+  sktm_kepentingan  String
+  sktm_ttd          Int?
+  sktm_createdBy    Int?
+  sktm_created      DateTime  @default(now())
+  sktm_updated      DateTime  @updatedAt
+  sktm_deleted      DateTime?
+  ttd_sktm          users?    @relation(fields: [sktm_ttd], references: [user_id])
+  created_by        users?    @relation("CreatedBy", fields: [sktm_createdBy], references: [user_id])
+}
+
+model belumNikah {
+  nikah_id           Int       @id @default(autoincrement())
+  nikah_nomor        String?
+  nikah_nama         String
+  nikah_jk           Int
+  nikah_tempat_lahir String
+  nikah_tgl_lahir    DateTime  @db.Date
+  nikah_suku         String
+  nikah_agama        Int
+  nikah_nik          String
+  nikah_alamat       String
+  nikah_kepentingan  String
+  nikah_ttd          Int?
+  nikah_createdBy    Int?
+  nikah_created      DateTime  @default(now())
+  nikah_updated      DateTime  @updatedAt
+  nikah_deleted      DateTime?
+  ttd_nikah          users?    @relation(fields: [nikah_ttd], references: [user_id])
+  created_by         users?    @relation("CreatedBy", fields: [nikah_createdBy], references: [user_id])
+}
+
+model skck {
+  skck_id                  Int       @id @default(autoincrement())
+  skck_nomor               String?
+  skck_nama                String
+  skck_tempat_lahir        String
+  skck_tanggal_lahir       DateTime  @db.Date
+  skck_jk                  Int
+  skck_agama               Int
+  skck_statusKawin         Int
+  skck_pekerjaan           String
+  skck_suku                String
+  skck_nik                 String
+  skck_alamat              String
+  skck_pendidikan_terakhir Int
+  skck_kepentingan         String
+  skck_ttd                 Int?
+  skck_createdBy           Int?
+  skck_created             DateTime  @default(now())
+  skck_updated             DateTime  @updatedAt
+  skck_deleted             DateTime?
+  ttd_skck                 users?    @relation(fields: [skck_ttd], references: [user_id])
+  createdBy                users?    @relation("CreatedBy", fields: [skck_createdBy], references: [user_id])
+}
+
+model kehilangan {
+  hilang_id        Int       @id @default(autoincrement())
+  hilang_nomor     String?
+  hilang_nama      String
+  hilang_jk        Int
+  hilang_umur      Int
+  hilang_pekerjaan String
+  hilang_alamat    String
+  hilang_hari      String
+  hilang_barang    String
+  hilang_dari      String
+  hilang_ke        String
+  hilang_ttd       Int?
+  hilang_createdBy Int?
+  hilang_created   DateTime  @default(now())
+  hilang_updated   DateTime  @updatedAt
+  hilang_deleted   DateTime?
+  ttd_hilang       users?    @relation(fields: [hilang_ttd], references: [user_id])
+  createdBy        users?    @relation("CreatedBy", fields: [hilang_createdBy], references: [user_id])
+}
+
+model penghasilan {
+  hasil_id          Int       @id @default(autoincrement())
+  hasil_nomor       String?
+  hasil_nama        String
+  hasil_umur        Int
+  hasil_pekerjaan   String
+  hasil_alamat      String
+  hasil_penghasilan String
+  hasil_ttd         Int?
+  hasil_createdBy   Int?
+  hasil_created     DateTime  @default(now())
+  hasil_updated     DateTime  @updatedAt
+  hasil_deleted     DateTime?
+  ttd_hasil         users?    @relation(fields: [hasil_ttd], references: [user_id])
+  createdBy         users?    @relation("CreatedBy", fields: [hasil_createdBy], references: [user_id])
+}
+
+model tani {
+  tani_id            Int       @id @default(autoincrement())
+  tani_nomor         String?
+  tani_nama          String
+  tani_jabatan       String
+  tani_sekretariat   String
+  tani_alamat        String
+  tani_keperluan     String
+  tani_tujuanBantuan String
+  tani_ttd           Int?
+  tani_createdBy     Int?
+  tani_created       DateTime  @default(now())
+  tani_updated       DateTime  @updatedAt
+  tani_deleted       DateTime?
+  ttd_tani           users?    @relation(fields: [tani_ttd], references: [user_id])
+  createdBy          users?    @relation("CreatedBy", fields: [tani_createdBy], references: [user_id])
+}
